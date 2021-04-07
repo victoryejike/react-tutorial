@@ -1,5 +1,6 @@
 import React from "react";
 import Square from "./Square";
+import calculateWinner from "./calculateWinner";
 
 const Board = () => {
   const initialValue = Array(9).fill(null);
@@ -9,8 +10,12 @@ const Board = () => {
   const handleClick = (i) => {
     //create a new array to have immutability
     const newSquareValues = squareValue.slice();
+    //check if there is a winner already before calling next player
+    let winner = calculateWinner(newSquareValues);
+    if (winner) return;
+    //set each individual square to the value X or O
     newSquareValues[i] = next ? "X" : "O";
-    console.log(newSquareValues);
+    //set state of the squareValue to have the above value
     setSquareValue(newSquareValues);
     setNext(!next);
   };
@@ -19,7 +24,13 @@ const Board = () => {
     return <Square value={squareValue[i]} onClick={() => handleClick(i)} />;
   };
 
-  const status = "Next Player: X";
+  let winner = calculateWinner(squareValue);
+  let status;
+  if (winner) {
+    status = `Winner: ${winner}`;
+  } else {
+    status = `Next Player ${next ? "X" : "O"}`;
+  }
 
   return (
     <>
